@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flowery_delivery/features/auth/presentation/apply/widgets/upload_license_card_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flowery_delivery/core/utils/widgets/app_text_form_field.dart';
@@ -48,6 +51,7 @@ class _ApplyFormFieldsState extends State<ApplyFormFields> {
     super.initState();
     _applyFormViewModel = ApplyFormViewModel();
     _loadCountries();
+
   }
 
   Future<void> _loadCountries() async {
@@ -96,7 +100,8 @@ class _ApplyFormFieldsState extends State<ApplyFormFields> {
           items: _applyFormViewModel.countries.map((country) {
             return DropdownMenuItem<String>(
               value: country['name'],
-              child: Text('${country['flag']} ${country['name']}'),
+              child: Text('${country['flag']} ${country['name']}',
+              style: TextStyle(fontSize: 12.sp,overflow: TextOverflow.ellipsis)),
             );
           }).toList(),
           onChanged: (value) {
@@ -105,6 +110,7 @@ class _ApplyFormFieldsState extends State<ApplyFormFields> {
               widget.countryController.text = value!;
             });
           },
+
         ),
         verticalSpacing(20.h),
         AppTextFormField(
@@ -151,12 +157,17 @@ class _ApplyFormFieldsState extends State<ApplyFormFields> {
           hintText: 'Upload license photo',
           labelText: 'Vehicle License',
           suffixIcon: GestureDetector(
-            onTap: _pickImageForLicense,
-            child: Icon(
+            onTap: (){
+              showDialog(context: context, builder: (context) {
+                return UploadLicenseCardDialog();
+              });
+
+            },
+            child: _applyFormViewModel.imagePath.isEmpty?Icon(
               Icons.file_upload_outlined,
               color: MyColors.gray,
               size: 30.sp,
-            ),
+            ):Image.file(File(_applyFormViewModel.imagePath),width: 30.sp,height: 30.sp,),
           ),
         ),
         verticalSpacing(20.h),
