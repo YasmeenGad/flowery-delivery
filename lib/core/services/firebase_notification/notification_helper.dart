@@ -29,15 +29,15 @@ class NotificationHelper {
     await _setupLocalNotifications();
     await messaging.setAutoInitEnabled(true);
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
+    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+    // FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
 
     // Handle terminated state notifications
-    RemoteMessage? initialMessage = await messaging.getInitialMessage();
-    if (initialMessage != null) {
-      _handleNavigation(initialMessage);
-    }
+    // RemoteMessage? initialMessage = await messaging.getInitialMessage();
+    // if (initialMessage != null) {
+    //   _handleNavigation(initialMessage);
+    // }
 
     await getDeviceToken();
   }
@@ -52,68 +52,68 @@ class NotificationHelper {
   }
 
   /// Handle Firebase background messages
-  static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    debugPrint("Handling background message: ${message.data}");
-    _handleNavigation(message);
-  }
+  // static Future<void> _firebaseMessagingBackgroundHandler(
+  //     RemoteMessage message) async {
+  //   debugPrint("Handling background message: ${message.data}");
+  //   _handleNavigation(message);
+  // }
 
-  /// Handle foreground messages (when app is open)
-  void _handleForegroundMessage(RemoteMessage message) {
-    debugPrint('Received foreground notification: ${message.data}');
-    if (message.notification != null) {
-      _showNotification(
-        title: message.notification!.title ?? 'New Notification',
-        body: message.notification!.body ?? '',
-      );
-    }
-  }
-
-  /// Handle notification click (when app is in background or foreground)
-  void _handleNotificationClick(RemoteMessage message) {
-    debugPrint("Notification clicked: ${message.data}");
-    _handleNavigation(message);
-  }
-
-  /// Handle navigation based on notification data
-  static void _handleNavigation(RemoteMessage message) {
-    final Map<String, dynamic> data = message.data;
-    final String? route = data['route'];
-    final String? orderId = data['orderId'];
-    final String? userId = data['userId'];
-
-    if (route != null) {
-      navigatorKey.currentState?.pushNamed(
-        route,
-        arguments: {
-          'orderId': orderId,
-          'userId': userId,
-        },
-      );
-    }
-    // else {
-    //   final notificationArgs = NotificationArgs(
-    //     title: message.notification?.title ?? '',
-    //     body: message.notification?.body ?? '',
-    //   );
-    //   navigatorKey.currentState?.pushNamed(
-    //     AppRoutes.notificationView,
-    //     arguments: notificationArgs,
-    //   );
-    // }
-  }
-
-  /// Subscribe to a topic
-  Future<void> subscribeToTopic(String topic) async {
-    await messaging.subscribeToTopic(topic);
-    debugPrint('✅ Subscribed to topic: $topic');
-  }
-
-  /// Unsubscribe from a topic
-  Future<void> unsubscribeFromTopic(String topic) async {
-    await messaging.unsubscribeFromTopic(topic);
-    debugPrint('❌ Unsubscribed from topic: $topic');
-  }
+  // /// Handle foreground messages (when app is open)
+  // void _handleForegroundMessage(RemoteMessage message) {
+  //   debugPrint('Received foreground notification: ${message.data}');
+  //   if (message.notification != null) {
+  //     _showNotification(
+  //       title: message.notification!.title ?? 'New Notification',
+  //       body: message.notification!.body ?? '',
+  //     );
+  //   }
+  // }
+  //
+  // /// Handle notification click (when app is in background or foreground)
+  // void _handleNotificationClick(RemoteMessage message) {
+  //   debugPrint("Notification clicked: ${message.data}");
+  //   _handleNavigation(message);
+  // }
+  //
+  // /// Handle navigation based on notification data
+  // static void _handleNavigation(RemoteMessage message) {
+  //   final Map<String, dynamic> data = message.data;
+  //   final String? route = data['route'];
+  //   final String? orderId = data['orderId'];
+  //   final String? userId = data['userId'];
+  //
+  //   if (route != null) {
+  //     navigatorKey.currentState?.pushNamed(
+  //       route,
+  //       arguments: {
+  //         'orderId': orderId,
+  //         'userId': userId,
+  //       },
+  //     );
+  //   }
+  //   // else {
+  //   //   final notificationArgs = NotificationArgs(
+  //   //     title: message.notification?.title ?? '',
+  //   //     body: message.notification?.body ?? '',
+  //   //   );
+  //   //   navigatorKey.currentState?.pushNamed(
+  //   //     AppRoutes.notificationView,
+  //   //     arguments: notificationArgs,
+  //   //   );
+  //   // }
+  // }
+  //
+  // /// Subscribe to a topic
+  // Future<void> subscribeToTopic(String topic) async {
+  //   await messaging.subscribeToTopic(topic);
+  //   debugPrint('✅ Subscribed to topic: $topic');
+  // }
+  //
+  // /// Unsubscribe from a topic
+  // Future<void> unsubscribeFromTopic(String topic) async {
+  //   await messaging.unsubscribeFromTopic(topic);
+  //   debugPrint('❌ Unsubscribed from topic: $topic');
+  // }
 
   /// Send Notification (Topic-based or Token-based)
   Future<void> sendNotification({
@@ -181,25 +181,4 @@ class NotificationHelper {
     );
   }
 
-  /// Show a local notification when the app is in the foreground
-  Future<void> _showNotification({
-    required String title,
-    required String body,
-  }) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
-      'high_importance_channel',
-      'High Importance Notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-
-    const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    await _flutterLocalNotificationsPlugin.show(
-      0, title, body, platformChannelSpecifics,
-      payload: '$title|$body',
-    );
-  }
 }

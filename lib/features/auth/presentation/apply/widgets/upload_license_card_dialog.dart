@@ -1,15 +1,15 @@
 import 'package:document_camera_frame/document_camera_frame.dart';
-import 'package:flowery_delivery/core/utils/extension/navigation.dart';
 import 'package:flowery_delivery/features/auth/presentation/apply/viewModel/apply_form_view_model.dart';
 import 'package:flutter/material.dart';
 
 class UploadLicenseCardDialog extends StatefulWidget {
-  
+  final Function(String imagePath) onSaved;
 
-    const UploadLicenseCardDialog({super.key});
+  const UploadLicenseCardDialog({super.key, required this.onSaved});
 
   @override
-  State<UploadLicenseCardDialog> createState() => _UploadLicenseCardDialogState();
+  State<UploadLicenseCardDialog> createState() =>
+      _UploadLicenseCardDialogState();
 }
 
 class _UploadLicenseCardDialogState extends State<UploadLicenseCardDialog> {
@@ -19,53 +19,30 @@ class _UploadLicenseCardDialogState extends State<UploadLicenseCardDialog> {
   void initState() {
     super.initState();
     _applyFormViewModel = ApplyFormViewModel();
-
   }
+
   @override
   Widget build(BuildContext context) {
-    return  DocumentCameraFrame(
-      // Document frame dimensions
+    return DocumentCameraFrame(
       frameWidth: 300.0,
       frameHeight: 200.0,
-
-      // Title displayed at the top
       title: const Text(
-        'Capture Your Document',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
+        'Align Your ID Card Within the Frame',
+        style: TextStyle(color: Colors.white, fontSize: 20),
       ),
-
-      // Show Close button
-      showCloseButton: true,
-
-      // Callback when the document is captured
-      onCaptured: (imgPath) {
-        debugPrint('Captured image path: $imgPath');
+      onCaptured: (path) {
+        debugPrint('Captured image at: $path');
       },
-
-      // Callback when the document is saved
-      onSaved: (imgPath) {
-
-        if (imgPath != null) {
-          _applyFormViewModel.pickCardId(imgPath);
-
-        }
-        if (_applyFormViewModel.imagePath.isNotEmpty) {
-          debugPrint('Saved image path 2: ${_applyFormViewModel.imagePath}');
-          context.pop();
-        }  
-
+      onSaved: (path) async {
+        // debugPrint('Saved image at: $path');
+        // final file = File(path);
+        // final size = await file.length();
+        // debugPrint('Image size: ${size / 1024} KB'); // Check file size
+        widget.onSaved(path);
       },
-
-      // Callback when the retake button is pressed
       onRetake: () {
-        debugPrint('Retake button pressed');
+        debugPrint('Retaking photo');
       },
-
-      // Optional: Customize Capture button, Save button, etc. if needed
     );
   }
 }

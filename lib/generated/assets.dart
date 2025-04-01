@@ -2,7 +2,8 @@
 class Assets {
   Assets._();
 
-  static const String assetsImagesBg = 'assets/images/bg.svg~';
+  static const String assetsTessdataAra = 'assets/tessdata/ara.traineddata';
+  static const String assetsTessdataConfig = 'assets/tessdata_config.json';
   static const String filesCities = 'assets/files/cities.json';
   static const String filesCountry = 'assets/files/country.json';
   static const String filesStates = 'assets/files/states.json';
@@ -67,6 +68,7 @@ class Assets {
   static const String imagesTrachIcon = 'assets/images/trach_icon.png';
   static const String imagesUpload = 'assets/images/upload.png';
   static const String imagesWhatsapp = 'assets/images/whatsapp.svg';
+  static const String tessdataAra = 'assets/tessdata/ara.traineddata';
   static const String translationsAr = 'translations/ar.json';
   static const String translationsEn = 'translations/en.json';
 
