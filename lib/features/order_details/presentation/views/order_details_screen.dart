@@ -3,6 +3,7 @@ import 'package:flowery_delivery/core/services/firebase_helper/fire_store_ref_ke
 import 'package:flowery_delivery/core/services/firebase_notification/notification_helper.dart';
 import 'package:flowery_delivery/core/styles/colors/my_colors.dart';
 import 'package:flowery_delivery/core/utils/extension/navigation.dart';
+import 'package:flowery_delivery/core/utils/extension/string_exetension.dart';
 import 'package:flowery_delivery/core/utils/widgets/base/app_loader.dart';
 import 'package:flowery_delivery/core/utils/widgets/buttons/carved_button.dart';
 import 'package:flowery_delivery/core/utils/widgets/custom_appbar.dart';
@@ -18,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:intl/intl.dart';
 import '../../../pick up location/data/models/address_details_model.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
@@ -67,18 +69,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       OrderStatusCard(
                           status: order!.state ?? '',
                           orderId: order.orderNumber ?? '',
-                          date: 'Wed, 03 Sep 2024, 11:00 AM'),
+                          date: DateFormat('dd MMM yyyy, hh:mm a')
+                              .format(DateTime.parse(order.createdAt ?? ''))),
                       SizedBox(height: 20),
                       if (order.store != null)
                         GestureDetector(
                           onTap: () {
                             final storeLatLong =
-                                order.store?.latLong?.split(",") ??
-                                    ["0.0", "0.0"];
+                                order.store?.latLong?.split(",") ?? ["0.0", "0.0"];
                             final storeLat =
                                 double.tryParse(storeLatLong[0]) ?? 0.0;
-                            final storeLng =
-                                double.tryParse(storeLatLong[1]) ?? 0.0;
+                            final storeLng = double.tryParse(storeLatLong[1]) ?? 0.0;
                             debugPrint(
                                 'storeLat: $storeLat, storeLng: $storeLng');
                             debugPrint(
@@ -147,7 +148,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             name:
                                 '${order.user!.firstName ?? ''} ${order.user!.lastName ?? ''}',
                             address: order.user!.email ?? '',
-                            image: order.user!.photo ?? '',
+                            image: order.user!.photo?.imageFormat() ?? '',
                             phone: order.user!.phone ?? '',
                           ),
                         ),

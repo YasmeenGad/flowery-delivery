@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flowery_delivery/core/styles/colors/my_colors.dart';
 import 'package:flowery_delivery/core/styles/fonts/my_fonts.dart';
+import 'package:flowery_delivery/core/utils/extension/string_exetension.dart';
 import 'package:flowery_delivery/features/order_details/domain/entities/order_details_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,7 +22,7 @@ class OrderItemCard extends StatelessWidget {
         leading:  ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: CachedNetworkImage(
-            imageUrl: order.product!.images!.first,
+            imageUrl: order.product!.images!.first.imageFormat(),
             width: 44.w,
             height: 44.h,
             fit: BoxFit.cover,

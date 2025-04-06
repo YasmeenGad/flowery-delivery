@@ -76,6 +76,8 @@ class OrderDetailsViewModelCubit extends Cubit<OrderDetailsViewModelState> {
           // orderId: action.order.id,
           // userId: action.order.user!.id,
         );
+        debugPrint(' order details add photo${action.order.user?.photo}');
+
         emit(AddOrderSuccess());
 
       case Fail<void>():
@@ -92,6 +94,8 @@ class OrderDetailsViewModelCubit extends Cubit<OrderDetailsViewModelState> {
       switch (result) {
         case Success<OrderDetailsEntity>():
           orderDetailsEntity = result.data;
+          debugPrint(' order details photo ${orderDetailsEntity!.orders?.user?.photo} """"');
+
           debugPrint(' order details ${result.data.orders}');
           emit(GetOrderDetailsSuccess(result.data));
         case Fail<OrderDetailsEntity>():
@@ -108,7 +112,6 @@ class OrderDetailsViewModelCubit extends Cubit<OrderDetailsViewModelState> {
     switch (result) {
       case Success<void>():
         debugPrint(' order status updated ${action.status}');
-
         emit(UpdateOrderStatusSuccess());
       case Fail<void>():
         emit(
