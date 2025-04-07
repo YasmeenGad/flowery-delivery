@@ -65,6 +65,19 @@ dependencies:
   image_picker: ^1.1.2
   animate_do: ^3.3.4
   custom_refresh_indicator: ^4.0.1
+  document_camera_frame: ^0.1.6
+  google_mlkit_text_recognition: ^0.15.0
+  google_mlkit_translation: ^0.13.0
+
+
+  translator: ^1.0.3+1
+
+  flutter_tesseract_ocr: ^0.4.28
+  path_provider: ^2.0.15
+  path: ^1.8.3
+  image: ^4.0.17
+
+
 
   # Dependency Injection
   injectable: ^2.5.0
@@ -94,6 +107,8 @@ dependencies:
   googleapis_auth: ^1.6.0
   firebase_messaging:
   flutter_local_notifications:
+
+
 
 
 dev_dependencies:
@@ -131,6 +146,8 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/files/
+    - assets/tessdata_config.json
+    - assets/tessdata/ara.traineddata
     - lib/generated/assets.dart
     - .env.firebase
     - translations/ar.json
