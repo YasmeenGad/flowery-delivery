@@ -1,7 +1,7 @@
 flutter_native_splash:
   #ios_android_11
   image: assets/images/splash.png
-  color: "#FD8F9F" # Fallback color (required)
+  color: "#D21E6A" # Fallback color (required)
   android: true
   ios: true
   web: true
@@ -30,9 +30,9 @@ flutter_native_splash:
   android_12:
 #    background_image: assets/images/core/launcher_background.png
     image: assets/images/splash.png
-    color: "#FD8F9F" # Fallback color (required)
+    color: "#D21E6A" # Fallback color (required)
     image_dark: assets/images/splash.png
-    icon_background_color_dark: "#121212"
+    icon_background_color_dark: "#D21E6A"
     android: true
     ios: true
     web: true
