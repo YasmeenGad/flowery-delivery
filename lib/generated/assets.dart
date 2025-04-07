@@ -62,6 +62,7 @@ class Assets {
   static const String imagesSearch = 'assets/images/search.png';
   static const String imagesShoppingCart = 'assets/images/shopping_cart.png';
   static const String imagesSplash = 'assets/images/splash.png';
+  static const String imagesSuccessImg = 'assets/images/success_img.svg';
   static const String imagesSwitch = 'assets/images/switch.png';
   static const String imagesTermsConditions = 'assets/images/terms_conditions.png';
   static const String imagesTrachIcon = 'assets/images/trach_icon.png';

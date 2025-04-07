@@ -108,7 +108,6 @@ class OrderDetailsViewModelCubit extends Cubit<OrderDetailsViewModelState> {
     switch (result) {
       case Success<void>():
         debugPrint(' order status updated ${action.status}');
-
         emit(UpdateOrderStatusSuccess());
       case Fail<void>():
         emit(

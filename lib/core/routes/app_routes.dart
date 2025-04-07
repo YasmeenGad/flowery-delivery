@@ -32,6 +32,7 @@ import '../../features/profile/presentation/views/profile_main_screen.dart';
 import '../../features/profile/presentation/views/profile_view.dart';
 import '../../features/profile/presentation/views/reset_password_profile_view.dart';
 import '../../features/profile/presentation/views/vehicle_view.dart';
+import '../../features/success page/presentation/views/success_view.dart';
 import 'base_routes.dart';
 
 class AppRoutes {
@@ -53,7 +54,7 @@ class AppRoutes {
   static const String locationView = "locationView";
   static const String driverOrderDetailsView = "driverOrderDetailsView";
   static const String trackOrder = 'trackOrder';
-
+  static const String successView = "successView";
 
   static Route<void> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
@@ -165,6 +166,8 @@ class AppRoutes {
                 ,
                 child: DriverOrderDetailsScreen(order: args as DriverOrderList,),
               ));
+      case AppRoutes.successView:
+        return BaseRoute(page: const SuccessView());
       default:
         return BaseRoute(page: const PageUnderBuildScreen());
     }
