@@ -1,4 +1,7 @@
 // location_view.dart (Refactored)
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:animate_do/animate_do.dart';
 import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:flowery_delivery/core/styles/colors/my_colors.dart';
 import 'package:flowery_delivery/di/di.dart';
@@ -67,8 +70,7 @@ class _LocationViewState extends State<LocationView> {
             },
             child: Consumer<UpdateDriverLocationViewModel>(
               builder: (context, state, child) {
-                if (state.currentLocation == null ||
-                    state.currentLocation == null) {
+                if (state.currentLocation == null) {
                   return Center(
                     child: SpinKitThreeInOut(
                       color: MyColors.baseColor,
@@ -76,7 +78,6 @@ class _LocationViewState extends State<LocationView> {
                     ),
                   );
                 }
-
 
                 return Column(
                   children: [
@@ -115,23 +116,34 @@ class _LocationViewState extends State<LocationView> {
                             ),
                           ),
                           if (state.currentLocation != null)
-                          MarkerData(
-                            marker: Marker(
-                              markerId: const MarkerId('current'),
-                              position: LatLng(
-                                state.currentLocation!.latitude!,
-                                state.currentLocation!.longitude!,
+                            MarkerData(
+                              marker: Marker(
+                                markerId: const MarkerId('current'),
+                                position: LatLng(
+                                  state.currentLocation!.latitude!,
+                                  state.currentLocation!.longitude!,
+                                ),
+                                anchor: Offset(0.5, 0.5),
+                                infoWindow: InfoWindow(
+                                  title:
+                                      'Speed :${state.currentLocation!.speed?.toStringAsFixed(2)} km/h '
+                                      '\n Accuracy: ${state.currentLocation!.speedAccuracy?.toStringAsFixed(2)} m/s '
+                                      '\n Remain Distance: ${state.finalDistance.toStringAsFixed(2)} m',
+                                  snippet: state.currentLocation!.speedAccuracy?.toStringAsFixed(2)
+                                      .toString(),
+                                ),
+                                rotation: state.carDegree,
                               ),
-                              anchor: Offset(0.5, 0.5),
-                              rotation: state.carDegree,
+                              child: FadeInDown(
+                                duration: const Duration(seconds: 1),
+                                child: Image.asset(
+                                  Assets.imagesMotorcycleDelivery,
+                                  width: 100.w,
+                                  height: 100.h,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
                             ),
-                            child: Image.asset(
-                              Assets.imagesMotorcycleDelivery,
-                              width: 100.w,
-                              height: 100.h,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
                         ],
                         builder: (BuildContext context, Set<Marker>? markers) {
                           return GoogleMap(
@@ -142,15 +154,10 @@ class _LocationViewState extends State<LocationView> {
                             mapType: MapType.terrain,
                             markers: markers ?? {},
                             polylines: state.polyLinesSet,
-                            onMapCreated: (GoogleMapController mapController) async {
+                            onMapCreated:
+                                (GoogleMapController mapController) async {
                               if (!state.mapController.isCompleted) {
                                 state.mapController.complete(mapController);
-                                final controller = await state.mapController.future;
-                                await controller.animateCamera(
-                                  CameraUpdate.newCameraPosition(
-                                    CameraPosition(target: state.sourceLatLng, zoom: 14.5, tilt: 59.0, bearing: -70.0),
-                                  ),
-                                );
                               }
                             },
                             zoomControlsEnabled: true,
@@ -170,7 +177,6 @@ class _LocationViewState extends State<LocationView> {
               },
             ),
           ),
-
           Positioned(
             top: 40.h,
             left: 16.w,

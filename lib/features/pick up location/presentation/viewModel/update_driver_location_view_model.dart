@@ -1,6 +1,6 @@
 // update_driver_location_view_model.dart
 import 'dart:async';
-import 'dart:math' as Math;
+import 'dart:math' ;
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,6 +12,7 @@ import '../../../order_details/presentation/viewModel/order_details_actions.dart
 import '../../../order_details/presentation/viewModel/order_details_view_model_cubit.dart';
 import '../../data/models/address_details_model.dart';
 
+
 class UpdateDriverLocationViewModel with ChangeNotifier {
   final OrderDetailsViewModelCubit viewModel;
   final Completer<GoogleMapController> mapController = Completer();
@@ -21,6 +22,8 @@ class UpdateDriverLocationViewModel with ChangeNotifier {
   LatLng sourceLatLng = LatLng(0.0, 0.0);
   LatLng destinationLatLng = LatLng(0.0, 0.0);
   final Location location = Location();
+  Location driverCurrentLocation = Location();
+  Timer? _timer;
   final List<LatLng> listLocations = [];
   final Set<Polyline> polyLinesSet = {};
   double carDegree = 0.0;
@@ -32,76 +35,70 @@ class UpdateDriverLocationViewModel with ChangeNotifier {
 
   UpdateDriverLocationViewModel(this.viewModel);
 
-  Future<void> getCurrentLocation(
-      AddressDetailsModel addressDetailsModel) async {
-    try {
+  _updateDriverLocation(AddressDetailsModel addressDetailsModel) {
+    // تحديث الموقع بشكل دوري كل ثانية
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) async {
+      currentLocation = await driverCurrentLocation.getLocation();
+      initMarkers([ LatLng(currentLocation?.latitude ?? 0.0, currentLocation?.longitude ?? 0.0), destinationLatLng]);
 
-      final userLocation = await location.getLocation();
-      sourceLocation = userLocation;
-      Location newCurrentLocation = Location();
-      currentLocation = await newCurrentLocation.getLocation();
+      // إعدادات الموقع
+      driverCurrentLocation.changeSettings(accuracy: LocationAccuracy.high, interval: 1000, distanceFilter: 1);
 
-      destinationLatLng = addressDetailsModel.isPickup
-          ? LatLng(addressDetailsModel.storeLocation.latitude,
-              addressDetailsModel.storeLocation.longitude)
-          : LatLng(addressDetailsModel.userLocation.latitude,
-              addressDetailsModel.userLocation.longitude);
-
-      sourceLatLng = LatLng(userLocation.latitude!, userLocation.longitude!);
-      initMarkers([sourceLatLng, destinationLatLng]);
-
-      markersInitialized = true;
-
-      newCurrentLocation.changeSettings(
-          accuracy: LocationAccuracy.high, interval: 1000, distanceFilter: 1);
-
-      _locationSubscription =
-          newCurrentLocation.onLocationChanged.listen((newLocation) async {
-            carDegree = newLocation.heading ?? carDegree;
-        carDegree  = (newLocation.heading != null && newLocation.heading! >= 0)
+      // الاشتراك في التغييرات في الموقع وتحديثه
+      _locationSubscription = driverCurrentLocation.onLocationChanged.listen((newLocation) async {
+        carDegree = newLocation.heading ?? carDegree;
+        carDegree = (newLocation.heading != null && newLocation.heading! >= 0)
             ? newLocation.heading!
-            : calculateDegrees(
-          LatLng(currentLocation?.latitude ?? 0.0, currentLocation?.longitude ?? 0.0),
-          LatLng(newLocation.latitude!, newLocation.longitude!),
-        );
+            : calculateDegrees(LatLng(currentLocation?.latitude ?? 0.0, currentLocation?.longitude ?? 0.0), LatLng(newLocation.latitude!, newLocation.longitude!));
 
-
-        currentLocation = newLocation;
-
+        // تحديث الكاميرا مع الموقع الجديد
         if (mapController.isCompleted) {
           final controller = await mapController.future;
-          await controller.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: LatLng(newLocation.latitude!, newLocation.longitude!),
-                zoom: 14.5,
-                tilt: 100,
-                bearing: 0,
-
-              ),
-            ),
-          );
+          await controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+            target: LatLng(newLocation.latitude!, newLocation.longitude!),
+            zoom: 14.5,
+            tilt: 100,
+            bearing: 0,
+          )));
+          currentLocation = newLocation;
+          notifyListeners();
         }
 
+        // تحديث البيانات إلى السيرفر أو إجراء أي عمليات ضرورية
         _updateLocation(addressDetailsModel, newLocation);
-      });
 
+        // إشعار لتحديث واجهة المستخدم
+        notifyListeners();
+      });
+    });
+    notifyListeners();
+  }
+
+  Future<void> getCurrentLocation(AddressDetailsModel addressDetailsModel) async {
+    try {
+      final userLocation = await location.getLocation();
+      sourceLocation = userLocation;
+      destinationLatLng = addressDetailsModel.isPickup
+          ? LatLng(addressDetailsModel.storeLocation.latitude, addressDetailsModel.storeLocation.longitude)
+          : LatLng(addressDetailsModel.userLocation.latitude, addressDetailsModel.userLocation.longitude);
+
+      sourceLatLng = LatLng(userLocation.latitude!, userLocation.longitude!);
+      _updateDriverLocation(addressDetailsModel);
     } catch (e) {
       debugPrint('❌ Error getting location: $e');
       sourceLocation = null;
     }
-    notifyListeners();
-
   }
 
   Future<void> initMarkers(List<LatLng> locations) async {
     listLocations.clear();
+    polyLinesSet.clear();
     listLocations.addAll(locations);
     await drawPolyLine(listLocations[0]);
+
   }
 
-  void _updateLocation(
-      AddressDetailsModel addressDetailsModel, LocationData locationData) {
+  void _updateLocation(AddressDetailsModel addressDetailsModel, LocationData locationData) {
     viewModel.doAction(UpdateLocation(
       userId: addressDetailsModel.userId,
       orderId: addressDetailsModel.orderId,
@@ -114,8 +111,7 @@ class UpdateDriverLocationViewModel with ChangeNotifier {
 
   Future<void> drawPolyLine(LatLng location) async {
     for (final elem in listLocations) {
-      final polyline =
-          await PolylineService().drawPolyline(from: location, to: elem);
+      final polyline = await PolylineService().drawPolyline(from: location, to: elem);
       finalDistance = PolylineService.totalDistance;
       polyLinesSet.add(polyline);
     }
@@ -129,26 +125,25 @@ class UpdateDriverLocationViewModel with ChangeNotifier {
     final double endLng = toRadians(endPoint.longitude);
 
     final double deltaLng = endLng - startLng;
-
-    final double y = Math.sin(deltaLng) * Math.cos(endLat);
-    final double x = Math.cos(startLat) * Math.sin(endLat) -
-        Math.sin(startLat) * Math.cos(endLat) * Math.cos(deltaLng);
-
-    final double bearing = Math.atan2(y, x);
+    final double y = sin(deltaLng) * cos(endLat);
+    final double x = cos(startLat) * sin(endLat) - sin(startLat) * cos(endLat) * cos(deltaLng);
+    final double bearing = atan2(y, x);
     return (toDegrees(bearing) + 360) % 360;
   }
 
   static double toRadians(double degrees) {
-    return degrees * (Math.pi / 180.0);
+    return degrees * (pi / 180.0);
   }
 
   static double toDegrees(double radians) {
-    return radians * (180.0 / Math.pi);
+    return radians * (180.0 / pi);
   }
 
   @override
   void dispose() {
     _locationSubscription?.cancel();
+    _timer?.cancel(); // تأكد من إلغاء الـ timer عند التخلص من الـ ViewModel
     super.dispose();
   }
 }
+
