@@ -44,7 +44,7 @@ class SuccessView extends StatelessWidget {
           CurvedButton(
             title: context.translate(LangKeys.done),
             onTap: () async {
-              await context.pushReplacementNamed(AppRoutes.pendingOrdersView);
+              await context.pushReplacementNamed(AppRoutes.homeLayout);
             },
           )
         ],

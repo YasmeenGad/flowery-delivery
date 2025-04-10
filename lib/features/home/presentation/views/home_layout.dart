@@ -8,6 +8,8 @@ import 'package:flowery_delivery/features/home/presentation/viewModel/pending_or
 import 'package:flowery_delivery/features/home/presentation/views/pending_orders_view.dart';
 import 'package:flowery_delivery/features/profile/presentation/viewModel/profile_actions.dart';
 import 'package:flowery_delivery/features/profile/presentation/viewModel/profile_view_model_cubit.dart';
+import 'package:flowery_delivery/features/profile/presentation/viewModel/vehicles/vehicles_action.dart';
+import 'package:flowery_delivery/features/profile/presentation/viewModel/vehicles/vehicles_cubit.dart';
 import 'package:flowery_delivery/features/profile/presentation/views/profile_main_screen.dart';
 import 'package:flowery_delivery/generated/assets.dart';
 import 'package:flutter/material.dart';
@@ -24,25 +26,30 @@ class _HomeLayoutState extends State<HomeLayout> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    MultiBlocProvider(providers: [
-      BlocProvider(
-          create: (context) => getIt.get<ProfileViewModelCubit>()
-            ..doAction(GetLoggedUserData())),
+
+
       BlocProvider<PendingOrderViewModelCubit>(
         create: (context) => getIt.get<PendingOrderViewModelCubit>()
           ..onAction(GetPendingOrders()),
+
+     child: PendingOrdersView()),
+    MultiBlocProvider(providers: [
+
+      BlocProvider<DriverOrderViewModelCubit>(
+        create: (context) =>
+            getIt.get<DriverOrderViewModelCubit>()..onAction(GetMyOrders()),
       )
-    ], child: PendingOrdersView()),
+    ], child: DriverOrdersView()),
     MultiBlocProvider(providers: [
       BlocProvider(
           create: (context) => getIt.get<ProfileViewModelCubit>()
             ..doAction(GetLoggedUserData())),
-      BlocProvider<DriverOrderViewModelCubit>(
-        create: (context) => getIt.get<DriverOrderViewModelCubit>()
-          ..onAction(GetMyOrders()),
-      )
-    ], child: DriverOrdersView()),
-    ProfileMainScreen(),
+      BlocProvider(
+          create: (context) =>
+          getIt.get<VehiclesCubit>()..doAction(GetAllVehicles())),
+
+
+    ], child: ProfileMainScreen()),
   ];
 
   @override
