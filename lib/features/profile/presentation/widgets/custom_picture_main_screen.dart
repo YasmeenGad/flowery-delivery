@@ -1,14 +1,14 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flowery_delivery/core/utils/extension/string_exetension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../generated/assets.dart';
-import '../viewModel/profile_view_model_cubit.dart';
 
 class CustomPictureMainScreen extends StatefulWidget {
-  const CustomPictureMainScreen({super.key, required this.state});
- final GetLoggedUserDataSuccess state;
+  const CustomPictureMainScreen({super.key, required this.image});
+ final String image;
   @override
   State<CustomPictureMainScreen> createState() =>
       _CustomPictureMainScreenState();
@@ -26,12 +26,12 @@ class _CustomPictureMainScreenState extends State<CustomPictureMainScreen> {
         fit: StackFit.passthrough,
         clipBehavior: Clip.antiAlias,
         children: [
-          widget.state.data.driver!.photo == null
+          widget.image == null
               ? const CircleAvatar(
             backgroundImage: AssetImage(Assets.imagesProfile),
           )
               : CircleAvatar(
-    backgroundImage: CachedNetworkImageProvider(widget.state.data.driver!.photo!.imageFormat())),
+    backgroundImage: CachedNetworkImageProvider(widget.image),),
         ],
       ),
     );

@@ -192,7 +192,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       () {
                         if (!context.mounted) return;
                         context.pushNamed(
-                          AppRoutes.pendingOrdersView,
+                          AppRoutes.homeLayout,
                         );
                       },
                     );

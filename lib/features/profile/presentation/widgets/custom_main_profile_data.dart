@@ -1,3 +1,5 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flowery_delivery/core/utils/extension/string_exetension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -18,22 +20,23 @@ class CustomMainProfileData extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-
-        CustomPictureMainScreen(state: state),
-        Column(
+Expanded(child:  CustomPictureMainScreen(image: state.data.driver!.photo!.imageFormat()))
+       ,
+        Expanded(
+          flex: 3,
+          child:  Column(
           spacing: 6.h,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${state.data.driver!.firstName}',
-                style: MyFonts.styleMedium500_18),
-            Text('${state.data.driver!.email}',
-                style: MyFonts.styleRegular400_16),
-            Text('${state.data.driver!.phone}',
+            FittedBox(child: AutoSizeText('${state.data.driver!.firstName}',
+                style: MyFonts.styleMedium500_18)),
+            FittedBox(child: AutoSizeText('${state.data.driver!.email}',)),
+            AutoSizeText('${state.data.driver!.phone}',
                 style: MyFonts.styleRegular400_16),
           ],
-        ),
-        const Spacer(),
+        ),),
+
         Icon(
           Icons.arrow_forward_ios,
           color: MyColors.grey,

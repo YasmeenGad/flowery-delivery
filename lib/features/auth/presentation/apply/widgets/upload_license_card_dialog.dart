@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:document_camera_frame/document_camera_frame.dart';
 import 'package:flowery_delivery/features/auth/presentation/apply/viewModel/apply_form_view_model.dart';
 import 'package:flutter/material.dart';

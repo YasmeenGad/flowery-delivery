@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element, use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flowery_delivery/core/styles/colors/my_colors.dart';
@@ -333,7 +335,7 @@ class _ApplyFormFieldsState extends State<ApplyFormFields> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Apply'),
-          content: Container(
+          content: SizedBox(
             height: 200.h,
             child: Center(
               child: Column(
