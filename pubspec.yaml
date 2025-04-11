@@ -92,8 +92,14 @@ dependencies:
   geolocator: ^13.0.2
   geocoding: ^3.0.0
   location: ^8.0.0
-  flutter_map: ^7.0.2
+  flutter_map: ^6.1.0
   latlong2: ^0.9.1
+  flutter_map_animated_marker: ^2.0.0
+  flutter_map_animations: ^0.6.0
+  custom_map_markers: ^0.0.2+1
+  google_maps_flutter: ^2.12.1
+  flutter_polyline_points: ^2.1.0
+
 
 
 
@@ -107,6 +113,7 @@ dependencies:
   googleapis_auth: ^1.6.0
   firebase_messaging:
   flutter_local_notifications:
+
 
 
 

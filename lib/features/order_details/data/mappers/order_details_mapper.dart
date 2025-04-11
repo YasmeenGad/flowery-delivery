@@ -1,6 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
-import 'package:flowery_delivery/core/services/location_helper.dart';
+import 'package:flowery_delivery/core/services/maps/location_helper.dart';
 import 'package:flowery_delivery/features/home/domain/entities/response/pending_order_response_entity.dart';
 import 'package:flowery_delivery/features/order_details/data/models/change_order_state_dto.dart';
 import 'package:flowery_delivery/features/order_details/data/models/order_details_model.dart';
@@ -198,14 +198,15 @@ class OrderDetailsMapper {
             email: entity.orders!.user!.email,
             gender: entity.orders!.user!.gender,
             phone: entity.orders!.user!.phone,
+            photo: entity.orders!.user!.photo,
             location: entity.orders!.user!.location != null
                 ? LocationModel(
                     latitude: entity.orders!.user!.location!.latitude,
                     longitude: entity.orders!.user!.location!.longitude,
                   )
                 : LocationModel(
-                    latitude: 30.0378248,
-                    longitude: 31.4307374,
+                    latitude: 31.219606,
+                    longitude: 29.941762,
                   ),
           ),
           orderItems: entity.orders!.orderItems!.map((item) {
@@ -245,7 +246,7 @@ class OrderDetailsMapper {
             image: entity.orders!.store!.image,
             address: entity.orders!.store!.address,
             phoneNumber: entity.orders!.store!.phoneNumber,
-            latLong: entity.orders!.store!.latLong,
+            latLong: entity.orders!.store!.latLong!.contains('-')? '31.266002,29.998640': entity.orders!.store!.latLong,
           )),
     );
   }

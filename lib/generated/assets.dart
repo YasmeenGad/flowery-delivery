@@ -7,6 +7,7 @@ class Assets {
   static const String filesCities = 'assets/files/cities.json';
   static const String filesCountry = 'assets/files/country.json';
   static const String filesStates = 'assets/files/states.json';
+  static const String floweryDeliveryAssetsTessdataConfig = 'assets/tessdata_config.json';
   static const String fontsOronteusFinaeus = 'assets/fonts/oronteus_finaeus.ttf';
   static const String generatedAssets = 'lib/generated/assets.dart';
   static const String imagesAboutAppImage = 'assets/images/about_app_image.gif';
@@ -32,6 +33,7 @@ class Assets {
   static const String imagesFallingFlowersAnim = 'assets/images/falling_flowers_anim.json';
   static const String imagesFilter = 'assets/images/filter.png';
   static const String imagesFlower = 'assets/images/flower.png';
+  static const String imagesFlowery = 'assets/images/Flowery.png';
   static const String imagesFloweryLoader = 'assets/images/flowery_loader.json';
   static const String imagesFloweryLogo = 'assets/images/Flowery_logo.png';
   static const String imagesFloweryRider = 'assets/images/flowery_rider.json';
@@ -45,6 +47,7 @@ class Assets {
   static const String imagesLogo = 'assets/images/logo.png';
   static const String imagesLogout = 'assets/images/logout.png';
   static const String imagesLogoutBlack = 'assets/images/logout_black.png';
+  static const String imagesMotorcycleDelivery = 'assets/images/motorcycle_delivery.png';
   static const String imagesNetwork = 'assets/images/network.jpg';
   static const String imagesNetworrk = 'assets/images/networrk.png';
   static const String imagesNoNetwork = 'assets/images/noNetwork.png';

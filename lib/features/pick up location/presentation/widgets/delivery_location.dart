@@ -20,6 +20,7 @@ class DeliveryLocation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.only( right: 16, top: 8, bottom: 8),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(48),
@@ -30,7 +31,7 @@ class DeliveryLocation extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 40.w,
+            width: 50.w,
             height: 30.h,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -39,7 +40,8 @@ class DeliveryLocation extends StatelessWidget {
               child: icon),
           Text(
             title,
-            style: MyFonts.styleRegular400_12.copyWith(
+            style: MyFonts.styleSemiBold600_14.copyWith(
+              fontFamily: 'oronteus',
                 color: isDestination ?? false
                     ? MyColors.baseColor
                     : MyColors.white),

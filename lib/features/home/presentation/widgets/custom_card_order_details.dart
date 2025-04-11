@@ -119,6 +119,8 @@ class CustomCardOrderDetails extends StatelessWidget {
                           arguments: {'orderId': order.id!, 'userId': order
                               .user!.id!});
                     },);
+                    debugPrint( 'user image: ${order.user!.photo}, user image format : ${order.user!.photo?.imageFormat()}');
+
                   },
                 ),
               ],

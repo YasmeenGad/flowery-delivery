@@ -1,17 +1,21 @@
+// location_view.dart (Refactored)
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flowery_delivery/generated/assets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:provider/provider.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:flowery_delivery/core/styles/colors/my_colors.dart';
 import 'package:flowery_delivery/di/di.dart';
 import 'package:flowery_delivery/features/order_details/presentation/viewModel/order_details_view_model_cubit.dart';
 import 'package:flowery_delivery/features/pick%20up%20location/presentation/widgets/delivery_location.dart';
+
+import 'package:flowery_delivery/generated/assets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+
 import '../../../../core/utils/widgets/base/snack_bar.dart';
 import '../../data/models/address_details_model.dart';
 import '../viewModel/update_driver_location_view_model.dart';
@@ -28,7 +32,6 @@ class LocationView extends StatefulWidget {
 }
 
 class _LocationViewState extends State<LocationView> {
-  final MapController mapController = MapController();
   late final OrderDetailsViewModelCubit viewModel;
   late final UpdateDriverLocationViewModel locationViewModel;
 
@@ -38,6 +41,12 @@ class _LocationViewState extends State<LocationView> {
     viewModel = getIt<OrderDetailsViewModelCubit>();
     locationViewModel = UpdateDriverLocationViewModel(viewModel);
     locationViewModel.getCurrentLocation(widget.addressDetailsModel);
+  }
+
+  @override
+  void dispose() {
+    locationViewModel.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,16 +60,13 @@ class _LocationViewState extends State<LocationView> {
         children: [
           BlocListener<OrderDetailsViewModelCubit, OrderDetailsViewModelState>(
             listener: (context, state) {
-              switch (state) {
-                case UpdateLocationError():
-                  aweSnackBar(
-                      title: 'Failed',
-                      msg: state.errorMessage,
-                      context: context,
-                      type: MessageTypeConst.failure);
-                  break;
-                default:
-                  null;
+              if (state is UpdateLocationError) {
+                aweSnackBar(
+                  title: 'Failed',
+                  msg: state.errorMessage,
+                  context: context,
+                  type: MessageTypeConst.failure,
+                );
               }
             },
             child: Consumer<UpdateDriverLocationViewModel>(
@@ -73,72 +79,92 @@ class _LocationViewState extends State<LocationView> {
                     ),
                   );
                 }
-                LatLng currentLatLng = LatLng(
-                  state.currentLocation!.latitude!,
-                  state.currentLocation!.longitude!,
-                );
-                LatLng destinationLatLng = widget.addressDetailsModel.isPickup
-                    ? LatLng(widget.addressDetailsModel.storeLocation.latitude,
-                        widget.addressDetailsModel.storeLocation.longitude)
-                    : LatLng(widget.addressDetailsModel.userLocation.latitude,
-                        widget.addressDetailsModel.userLocation.longitude);
 
                 return Column(
                   children: [
                     Expanded(
                       flex: 2,
-                      child: FlutterMap(
-                        mapController: mapController,
-                        options: MapOptions(
-                          initialCenter: currentLatLng,
-                          initialZoom: 15.0,
-                        ),
-                        children: [
-                          TileLayer(
-                            urlTemplate:
-                                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            subdomains: const ['a', 'b', 'c'],
+                      child: CustomGoogleMapMarkerBuilder(
+                        customMarkers: [
+                          MarkerData(
+                            marker: Marker(
+                              markerId: const MarkerId('source'),
+                              position: state.sourceLatLng,
+                            ),
+                            child: DeliveryLocation(
+                              color: MyColors.baseColor,
+                              icon: Icon(Icons.location_on_outlined,
+                                  color: MyColors.baseColor),
+                              title: 'Your Location',
+                            ),
                           ),
-                          MarkerLayer(
-                            markers: [
-                              Marker(
-                                width: 115,
-                                height: 35,
-                                point: currentLatLng,
-                                child: DeliveryLocation(
-                                  color: MyColors.baseColor,
-                                  icon: Icon(Icons.location_on_outlined),
-                                  title: 'Your Location',
+                          MarkerData(
+                            marker: Marker(
+                              markerId: const MarkerId('destination'),
+                              position: state.destinationLatLng,
+                            ),
+                            child: DeliveryLocation(
+                              color: MyColors.baseColor,
+                              icon: widget.addressDetailsModel.isPickup
+                                  ? Image.asset(Assets.imagesFlowery,
+                                      width: 30, height: 30)
+                                  : Icon(Icons.home_outlined,
+                                      color: MyColors.baseColor),
+                              isDestination: false,
+                              title: widget.addressDetailsModel.isPickup
+                                  ? 'Flowery'
+                                  : 'User',
+                            ),
+                          ),
+                          if (state.currentLocation != null)
+                            MarkerData(
+                              marker: Marker(
+                                markerId: const MarkerId('current'),
+                                position: LatLng(
+                                  state.currentLocation!.latitude!,
+                                  state.currentLocation!.longitude!,
+                                ),
+                                anchor: Offset(0.5, 0.5),
+                                infoWindow: InfoWindow(
+                                  title:
+                                      'Speed :${state.currentLocation!.speed?.toStringAsFixed(2)} km/h '
+                                      '\n Accuracy: ${state.currentLocation!.speedAccuracy?.toStringAsFixed(2)} m/s '
+                                      '\n Remain Distance: ${state.finalDistance.toStringAsFixed(2)} m',
+                                  snippet: state.currentLocation!.speedAccuracy?.toStringAsFixed(2)
+                                      .toString(),
+                                ),
+                                rotation: state.carDegree,
+                              ),
+                              child: FadeInDown(
+                                duration: const Duration(seconds: 1),
+                                child: Image.asset(
+                                  Assets.imagesMotorcycleDelivery,
+                                  width: 100.w,
+                                  height: 100.h,
+                                  fit: BoxFit.fill,
                                 ),
                               ),
-                              Marker(
-                                  width: 95,
-                                  height: 32,
-                                  point: destinationLatLng,
-                                  child: DeliveryLocation(
-                                    color: MyColors.white,
-                                    title: widget.addressDetailsModel.isPickup
-                                        ? 'Flowery'
-                                        : 'User',
-                                    icon: Image.asset(
-                                      Assets.imagesFloweryLogo,
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                    isDestination: true,
-                                  )),
-                            ],
-                          ),
-                          PolylineLayer(
-                            polylines: [
-                              Polyline(
-                                points: [currentLatLng, destinationLatLng],
-                                strokeWidth: 4.0,
-                                color: MyColors.baseColor,
-                              ),
-                            ],
-                          ),
+                            ),
                         ],
+                        builder: (BuildContext context, Set<Marker>? markers) {
+                          return GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: state.sourceLatLng,
+                              zoom: 14.0,
+                            ),
+                            mapType: MapType.terrain,
+                            markers: markers ?? {},
+                            polylines: state.polyLinesSet,
+                            onMapCreated:
+                                (GoogleMapController mapController) async {
+                              if (!state.mapController.isCompleted) {
+                                state.mapController.complete(mapController);
+                              }
+                            },
+                            zoomControlsEnabled: true,
+                            zoomGesturesEnabled: true,
+                          );
+                        },
                       ),
                     ),
                     Expanded(
