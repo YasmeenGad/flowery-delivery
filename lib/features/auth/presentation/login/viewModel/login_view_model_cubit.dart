@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flowery_delivery/core/networking/error/error_handler.dart';
-import 'package:flowery_delivery/core/utils/extension/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +10,7 @@ import '../../../../../core/networking/common/api_result.dart';
 import '../../../../../core/networking/error/error_model.dart';
 import '../../../../../core/routes/app_routes.dart';
 import '../../../../../core/services/maps/location_helper.dart';
+import '../../../../../core/services/location_helper.dart';
 import '../../../../../di/di.dart';
 import '../../../data/data_sources/contracts/offline_data_source.dart';
 import '../../../domain/entities/response/login_response_entity.dart';
@@ -58,9 +58,7 @@ class LoginViewModel extends Cubit<LoginViewModelState> {
             debugPrint("${_offlineDataSource.getToken()}");
           }
           emit(LoginViewModelSuccess(result.data));
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.pushReplacementNamed(AppRoutes.pendingOrdersView);
-          });
+
 
         }
       case Fail<LoginResponseEntity>():

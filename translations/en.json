@@ -245,5 +245,8 @@
     "user_address": "User address",
     "order_number": "Order number",
     "order_details" : "Order Details",
-    "in_progress": "In Progress"
+  "in_progress": "In Progress",
+    "done": "Done",
+    "Thank_you": "Thank you!!",
+    "The_order_delivered_successfully": "The order delivered successfully"
 }

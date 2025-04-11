@@ -185,7 +185,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   );
                   if(order.state==FireStoreRefKey.delivered){
                     await getIt.get<OrderDetailsViewModelCubit>()
-
                         .doAction(ChangeOrderStatus(
                           orderId: order.id!,
                           state: FireStoreRefKey.completed,
@@ -194,7 +193,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       () {
                         if (!context.mounted) return;
                         context.pushNamed(
-                          AppRoutes.pendingOrdersView,
+                          AppRoutes.homeLayout,
                         );
                       },
                     );

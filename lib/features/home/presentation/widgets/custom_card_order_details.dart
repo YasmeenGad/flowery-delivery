@@ -21,7 +21,6 @@ import '../../../../core/styles/colors/my_colors.dart';
 import '../../../../core/styles/fonts/my_fonts.dart';
 import '../../../../core/utils/widgets/spacing.dart';
 import '../../domain/entities/response/pending_order_response_entity.dart';
-import 'home_bloc_listener.dart';
 
 class CustomCardOrderDetails extends StatelessWidget {
   const CustomCardOrderDetails({
@@ -71,7 +70,6 @@ class CustomCardOrderDetails extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                HomeBlocListener(order: order),
                 AutoSizeText("EGP ${order.totalPrice.toString()}",
                     style: MyFonts.styleSemiBold600_14
                         .copyWith(color: MyColors.blackBase)),
