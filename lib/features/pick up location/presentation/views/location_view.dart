@@ -1,13 +1,11 @@
 // location_view.dart (Refactored)
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:animate_do/animate_do.dart';
 import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:flowery_delivery/core/styles/colors/my_colors.dart';
 import 'package:flowery_delivery/di/di.dart';
 import 'package:flowery_delivery/features/order_details/presentation/viewModel/order_details_view_model_cubit.dart';
 import 'package:flowery_delivery/features/pick%20up%20location/presentation/widgets/delivery_location.dart';
-
 import 'package:flowery_delivery/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -128,20 +126,19 @@ class _LocationViewState extends State<LocationView> {
                                 infoWindow: InfoWindow(
                                   title:
                                       'Speed :${state.currentLocation!.speed?.toStringAsFixed(2)} km/h '
-                                      '\n Accuracy: ${state.currentLocation!.speedAccuracy?.toStringAsFixed(2)} m/s '
                                       '\n Remain Distance: ${state.finalDistance.toStringAsFixed(2)} m',
                                   snippet: state.currentLocation!.speedAccuracy?.toStringAsFixed(2)
                                       .toString(),
                                 ),
                                 rotation: state.carDegree,
                               ),
-                              child: FadeInDown(
-                                duration: const Duration(seconds: 1),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: Image.asset(
                                   Assets.imagesMotorcycleDelivery,
                                   width: 100.w,
                                   height: 100.h,
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.fitHeight,
                                 ),
                               ),
                             ),

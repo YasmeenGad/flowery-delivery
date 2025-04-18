@@ -8,9 +8,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../../core/networking/common/api_result.dart';
 import '../../../../../core/networking/error/error_model.dart';
-import '../../../../../core/routes/app_routes.dart';
 import '../../../../../core/services/maps/location_helper.dart';
-import '../../../../../core/services/location_helper.dart';
 import '../../../../../di/di.dart';
 import '../../../data/data_sources/contracts/offline_data_source.dart';
 import '../../../domain/entities/response/login_response_entity.dart';
