@@ -37,15 +37,21 @@ class UpdateDriverLocationViewModel with ChangeNotifier {
 
   _updateDriverLocation(AddressDetailsModel addressDetailsModel) {
     // تحديث الموقع بشكل دوري كل ثانية
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) async {
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
+
       currentLocation = await driverCurrentLocation.getLocation();
-      initMarkers([ LatLng(currentLocation?.latitude ?? 0.0, currentLocation?.longitude ?? 0.0), destinationLatLng]);
+      driverCurrentLocation.changeSettings(accuracy: LocationAccuracy.navigation, interval: 1000, distanceFilter: 1);
+
+      initMarkers([ LatLng(currentLocation!.latitude!, currentLocation!.longitude !), destinationLatLng]);
 
       // إعدادات الموقع
-      driverCurrentLocation.changeSettings(accuracy: LocationAccuracy.high, interval: 1000, distanceFilter: 1);
 
       // الاشتراك في التغييرات في الموقع وتحديثه
       _locationSubscription = driverCurrentLocation.onLocationChanged.listen((newLocation) async {
+        // تحديث البيانات إلى السيرفر أو إجراء أي عمليات ضرورية
+        _updateLocation(addressDetailsModel, currentLocation!);
+
+
         carDegree = newLocation.heading ?? carDegree;
         carDegree = (newLocation.heading != null && newLocation.heading! >= 0)
             ? newLocation.heading!
@@ -64,11 +70,7 @@ class UpdateDriverLocationViewModel with ChangeNotifier {
           notifyListeners();
         }
 
-        // تحديث البيانات إلى السيرفر أو إجراء أي عمليات ضرورية
-        _updateLocation(addressDetailsModel, newLocation);
 
-        // إشعار لتحديث واجهة المستخدم
-        notifyListeners();
       });
     });
     notifyListeners();
@@ -99,6 +101,8 @@ class UpdateDriverLocationViewModel with ChangeNotifier {
   }
 
   void _updateLocation(AddressDetailsModel addressDetailsModel, LocationData locationData) {
+    debugPrint(' update order details location view model =>>> $locationData');
+
     viewModel.doAction(UpdateLocation(
       userId: addressDetailsModel.userId,
       orderId: addressDetailsModel.orderId,
@@ -107,6 +111,7 @@ class UpdateDriverLocationViewModel with ChangeNotifier {
         longitude: locationData.longitude,
       ),
     ));
+
   }
 
   Future<void> drawPolyLine(LatLng location) async {

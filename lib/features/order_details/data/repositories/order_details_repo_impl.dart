@@ -3,6 +3,7 @@ import 'package:flowery_delivery/features/order_details/data/data_sources/contra
 import 'package:flowery_delivery/features/order_details/data/models/order_details_model.dart';
 import 'package:flowery_delivery/features/order_details/domain/entities/order_details_entity.dart';
 import 'package:flowery_delivery/features/order_details/domain/repositories/contract/order_details_repo.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable(as: OrderDetailsRepo)
@@ -42,6 +43,9 @@ class OrderDetailsRepoImpl implements OrderDetailsRepo {
       {required String orderId,
       required String userId,
       required LocationModel location}) async {
+
+    debugPrint(' update order details location =>>> ${location.toJson()}');
+
     return await _dataSource.updateLocation(
         orderId: orderId, useId: userId, location: location);
   }
