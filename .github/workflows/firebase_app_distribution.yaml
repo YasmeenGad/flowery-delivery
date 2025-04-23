@@ -85,7 +85,7 @@ jobs:
       # Step 10: Build the release APK with Proguard enabled
       - name: Build APK for Production
         run: |
-          flutter build apk --release --no-tree-shake-icons
+          flutter build apk --release --info  --no-tree-shake-icons
         # Builds the release APK for Android with Proguard enabled.
 
       # Step 11: Distribute APK to Firebase
