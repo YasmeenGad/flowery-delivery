@@ -44,7 +44,9 @@ android {
             signingConfig = signingConfigs.debug
 
             // Enable minification (R8)
-            minifyEnabled true
+            minifyEnabled false
+
+            // Enable shrink resources
             shrinkResources true
 
             // Specify the Proguard configuration file
