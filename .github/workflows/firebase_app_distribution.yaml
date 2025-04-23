@@ -100,6 +100,7 @@ jobs:
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
         # This action uploads the built APK to Firebase App Distribution for testing.
 
+
       # Step 12: Upload APK as an artifact
       - name: Upload APK as Artifact
         uses: actions/upload-artifact@v4
