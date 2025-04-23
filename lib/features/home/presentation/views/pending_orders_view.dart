@@ -125,10 +125,8 @@ class _PendingOrdersViewState extends State<PendingOrdersView> {
                         itemCount: state.response.orders!.length,
                         itemBuilder: (_, index) {
                           if (index ==
-                                  context
-                                      .read<PendingOrderViewModelCubit>()
-                                      .totalItems &&
-                              state is PendingOrderViewModelLoading) {
+                                  context.read<PendingOrderViewModelCubit>().totalItems &&
+                              state is PendingOrderViewModelLoading ||profileViewModelCubit.driverDataResponseEntity == null) {
                             return Center(
                               child:
                                   SizedBox(height: 130.h, child: AppLoader()),
@@ -139,8 +137,7 @@ class _PendingOrdersViewState extends State<PendingOrdersView> {
                             duration: const Duration(milliseconds: 1000),
                             child: CustomCardOrderDetails(
                               order: state.response.orders![index]!,
-                              driver: profileViewModelCubit
-                                  .driverDataResponseEntity!.driver!,
+                              driver: profileViewModelCubit.driverDataResponseEntity!.driver!,
                             ),
                           );
                         },
