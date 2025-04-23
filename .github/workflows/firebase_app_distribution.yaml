@@ -91,7 +91,7 @@ jobs:
       - name: Distribute APK to Firebase
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          appId: ${{ secrets.ANDROID_APP_ID }} # The Firebase app ID
+          appId: ${{ secrets.DELIVERY_ANDROID_APP_ID }} # The Firebase app ID
 #          token: ${{ secrets.FIREBASE_CLI_TOKEN }} # Firebase CLI authentication token " Will be Deprecated Soon "
           file: build/app/outputs/flutter-apk/app-release.apk # Path to the APK file
           groups: maintainers # Firebase tester group
