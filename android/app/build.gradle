@@ -44,7 +44,7 @@ android {
             signingConfig = signingConfigs.debug
 
             // Enable minification (R8)
-            minifyEnabled false
+            minifyEnabled true
 
             // Enable shrink resources
             shrinkResources true
