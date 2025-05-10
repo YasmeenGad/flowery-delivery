@@ -10,6 +10,7 @@ import 'package:flowery_delivery/core/utils/widgets/spacing.dart';
 import 'package:flowery_delivery/features/auth/presentation/apply/widgets/upload_license_card_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image/image.dart' as img;
 
 import '../../../../../core/utils/validators.dart';
 import '../viewModel/apply_form_view_model.dart';
@@ -63,28 +64,19 @@ class _ApplyFormFieldsState extends State<ApplyFormFields> {
     setState(() {});
   }
 
-  Future<void> _pickImageForLicense() async {
-    final pickedFile = await _applyFormViewModel.pickImage();
-    if (pickedFile?.path.split(".").last == "png" ||
-        pickedFile?.path.split(".").last == "jpeg") {
-      if (pickedFile != null) {
-        setState(() {
-          widget.vehicleLicenseController.text = pickedFile.path;
-        });
-      }
-    }
-  }
+  Future<File> compressImage(String originalPath) async {
+    final file = File(originalPath);
+    final bytes = await file.readAsBytes();
+    final image = img.decodeImage(bytes);
 
-  Future<void> _pickImageForId() async {
-    final pickedFile = await _applyFormViewModel.pickImage();
-    if (pickedFile?.path.split(".").last == "png" ||
-        pickedFile?.path.split(".").last == "jpeg") {
-      if (pickedFile != null) {
-        setState(() {
-          widget.idImageController.text = pickedFile.path;
-        });
-      }
-    }
+    if (image == null) return file;
+
+    final resized = img.copyResize(image, width: 1024); // قلل الأبعاد
+    final compressedBytes = img.encodeJpg(resized, quality: 70); // قلل الجودة
+
+    final targetPath = originalPath.replaceFirst('.jpg', '_compressed.jpg');
+    final compressedFile = File(targetPath);
+    return await compressedFile.writeAsBytes(compressedBytes);
   }
 
   @override
@@ -167,13 +159,17 @@ class _ApplyFormFieldsState extends State<ApplyFormFields> {
                   builder: (context) {
                     return UploadLicenseCardDialog(
                       onSaved: (imagePath) async {
-                        _applyFormViewModel.pickLicenseCard(imagePath);
+                        final compressedFile = await compressImage(imagePath);
+                        final compressedPath = compressedFile.path;
+
+                        widget.vehicleLicenseController.text = compressedPath;
+                        _applyFormViewModel.pickLicenseCard(compressedPath);
                         if (_applyFormViewModel
                             .licenseCardPath.value.isNotEmpty) {
                           await _applyFormViewModel
                               .getLicenseCardDataFromImagePath(
                                   _applyFormViewModel.licenseCardPath.value);
-                          widget.vehicleLicenseController.text =
+                          widget.vehicleNumberController.text =
                               _applyFormViewModel.licenseCardData[1];
                           widget.firstLegalNameController.text =
                               _applyFormViewModel.licenseCardData[2]
@@ -303,14 +299,18 @@ class _ApplyFormFieldsState extends State<ApplyFormFields> {
         builder: (context) {
           return UploadLicenseCardDialog(
             onSaved: (imagePath) async {
-              _applyFormViewModel.pickCardId(imagePath);
+              final compressedFile = await compressImage(imagePath);
+              final compressedPath = compressedFile.path;
+
+              widget.idImageController.text = compressedPath;
+              _applyFormViewModel.pickCardId(compressedPath);
               if (_applyFormViewModel.cardIdPath.value.isNotEmpty) {
                 final result = await _applyFormViewModel
                     .scanEgyptianIdCard(_applyFormViewModel.cardIdPath.value);
 
                 widget.idNumberController.text =
                     await result['national_id'] ?? '';
-                if (widget.idNumberController.text .isEmpty) {
+                if (widget.idNumberController.text.isEmpty) {
                   showDialog(
                     context: context,
                     builder: (context) => AppLoader(),

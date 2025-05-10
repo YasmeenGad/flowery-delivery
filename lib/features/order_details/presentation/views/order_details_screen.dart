@@ -131,8 +131,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     orderId: order.id ?? '',
                                     isPickup: false,
                                     userTitle: 'User Address',
-                                    userName:
-                                        '${order.user!.firstName ?? ''} ${order.user!.lastName ?? ''}',
+                                    userName: '${order.user!.firstName ?? ''} ${order.user!.lastName ?? ''}',
                                     userAddress: order.user!.email ?? '',
                                     userImage: order.user!.photo ?? '',
                                     userPhone: order.user!.phone ?? '',
