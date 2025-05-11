@@ -13,10 +13,12 @@ class ErrorHandler {
   static ErrorModel handle(Exception error) {
     if (error is DioException) {
       return ErrorHandler.networkError(error, error.response?.statusCode);
-    } else if (error is IOException) {
+    }
+    else if (error is IOException) {
       return const ErrorModel(
           error: "No internet connection. Please check your settings.");
-    } else {
+    }
+    else {
       return const ErrorModel(error: "An unknown error occurred. Please try again.");
     }
   }

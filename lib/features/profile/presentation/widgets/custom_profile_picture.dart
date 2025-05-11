@@ -1,15 +1,20 @@
 import 'dart:io';
 
-import 'package:flowery_delivery/core/utils/extension/media_query_values.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/styles/colors/my_colors.dart';
+import '../../../../core/utils/extension/media_query_values.dart';
+import '../../../../core/utils/extension/string_exetension.dart';
 import '../../../../core/utils/widgets/base/snack_bar.dart';
 import '../../../../di/di.dart';
 import '../../../../generated/assets.dart';
+import '../../../profile/presentation/viewModel/profile_actions.dart';
+import '../../../profile/presentation/viewModel/profile_view_model_cubit.dart';
 import '../viewModel/edit_profile/edit_profile_action.dart';
 import '../viewModel/edit_profile/edit_profile_cubit.dart';
 
@@ -23,12 +28,15 @@ class ProfilePic extends StatefulWidget {
 class _ProfilePicState extends State<ProfilePic> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
-  late final EditProfileCubit profileViewModel;
+  late final EditProfileCubit editProfileViewModel;
+  late final ProfileViewModelCubit profileViewModelCubit;
 
   @override
   void initState() {
     super.initState();
-    profileViewModel = getIt.get<EditProfileCubit>();
+    editProfileViewModel = getIt.get<EditProfileCubit>();
+    profileViewModelCubit = context.read<ProfileViewModelCubit>()
+      ..doAction(GetLoggedUserData());
   }
 
   Future<void> _pickImage(ImageSource imageSource) async {
@@ -36,11 +44,8 @@ class _ProfilePicState extends State<ProfilePic> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
-        profileViewModel.doAction(UploadPhoto(_image!));
-        debugPrint("*******************************************");
-        debugPrint(_image.toString());
-        debugPrint("*******************************************");
       });
+      editProfileViewModel.doAction(UploadPhoto(_image!));
     }
   }
 
@@ -81,15 +86,13 @@ class _ProfilePicState extends State<ProfilePic> {
                 SizedBox(height: 10.h),
                 Divider(thickness: 1, color: Colors.grey[300]),
                 ListTile(
-                  leading: const Icon(Icons.camera_alt_outlined,
-                      color: Colors.green),
+                  leading: const Icon(Icons.camera_alt_outlined, color: Colors.green),
                   title: Text(
                     context.translate(LangKeys.takeAPhoto),
                     style: TextStyle(color: Colors.black, fontSize: 16.sp),
                   ),
                   onTap: () {
                     _pickImage(ImageSource.camera);
-                    setState(() {});
                     Navigator.pop(context);
                   },
                 ),
@@ -101,7 +104,6 @@ class _ProfilePicState extends State<ProfilePic> {
                     style: TextStyle(color: Colors.black, fontSize: 16.sp),
                   ),
                   onTap: () {
-                    setState(() {});
                     _pickImage(ImageSource.gallery);
                     Navigator.pop(context);
                   },
@@ -128,12 +130,6 @@ class _ProfilePicState extends State<ProfilePic> {
     );
   }
 
-  // void _setImage(File? image) {
-  //   setState(() {
-  //     _image = image;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<EditProfileCubit, EditProfileState>(
@@ -141,26 +137,34 @@ class _ProfilePicState extends State<ProfilePic> {
         switch (state) {
           case UploadPhotoLoading():
             aweSnackBar(
-                msg: 'Loading...',
-                context: context,
-                type: MessageTypeConst.help,
-                title: 'Loading');
+              msg: 'Loading...',
+              context: context,
+              type: MessageTypeConst.help,
+              title: 'Loading',
+            );
             break;
+
           case UploadPhotoSuccess():
+            profileViewModelCubit.doAction(GetLoggedUserData());
             aweSnackBar(
-                msg: state.data.message.toString(),
-                context: context,
-                type: MessageTypeConst.success,
-                title: 'Success');
+              msg: state.data.message.toString(),
+              context: context,
+              type: MessageTypeConst.success,
+              title: 'Success',
+            );
             break;
+
           case UploadPhotoError():
             aweSnackBar(
-                msg: state.error.error.toString(),
-                context: context,
-                type: MessageTypeConst.failure,
-                title: 'Error');
+              msg: state.error.error.toString(),
+              context: context,
+              type: MessageTypeConst.failure,
+              title: 'Error',
+            );
             break;
+
           default:
+            break;
         }
       },
       child: SizedBox(
@@ -170,12 +174,28 @@ class _ProfilePicState extends State<ProfilePic> {
           fit: StackFit.expand,
           clipBehavior: Clip.none,
           children: [
-            _image == null
-                ? const CircleAvatar(
-                    backgroundImage: AssetImage(Assets.imagesProfile),
-                  )
-                : CircleAvatar(
-                    backgroundImage: FileImage(_image!) as ImageProvider),
+            BlocBuilder<ProfileViewModelCubit, ProfileViewModelState>(
+              builder: (context, state) {
+                String? photoUrl;
+                if (state is GetLoggedUserDataSuccess) {
+                  photoUrl = state.data.driver?.photo?.imageFormat();
+                }
+
+                ImageProvider imageProvider;
+
+                if (_image != null) {
+                  imageProvider = FileImage(_image!);
+                } else if (photoUrl != null && photoUrl.isNotEmpty) {
+                  imageProvider = CachedNetworkImageProvider(photoUrl);
+                } else {
+                  imageProvider = const AssetImage(Assets.imagesProfile);
+                }
+
+                return CircleAvatar(
+                  backgroundImage: imageProvider,
+                );
+              },
+            ),
             Positioned(
               right: -18.w,
               bottom: 2.h,

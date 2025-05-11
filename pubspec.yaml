@@ -54,6 +54,7 @@ dependencies:
   document_camera_frame: ^0.1.6
   google_mlkit_text_recognition: ^0.15.0
   google_mlkit_translation: ^0.13.0
+  flutter_image_compress: ^2.1.0
 
   translator: ^1.0.3+1
 
@@ -81,6 +82,7 @@ dependencies:
   custom_map_markers: ^0.0.2+1
   google_maps_flutter: ^2.12.1
   flutter_polyline_points: ^2.1.0
+  flutter_tesseract_ocr: ^0.4.28
 
   # Firebase
   firebase_core: ^3.9.0
@@ -117,7 +119,7 @@ flutter:
     - assets/fonts/
     - assets/files/
     - assets/tessdata_config.json
-    - assets/tessdata/ara.traineddata
+    - assets/tessdata/
     - lib/generated/assets.dart
     - .env.firebase
     - translations/ar.json

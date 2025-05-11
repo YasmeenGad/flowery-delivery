@@ -30,15 +30,16 @@ class ApplyDriverViewModelCubit extends Cubit<ApplyDriverViewModelState> {
 
   Future<void> _applyDriver(ApplyRequestEntity request) async {
     emit(ApplyDriverViewModelLoading());
+    debugPrint(' request: $request');
     final result = await _useCase.applyDriver(request);
 
     switch (result) {
       case Success<ApplyResponseEntity>():
         emit(ApplyDriverViewModelSuccess(result.data));
-        break;
+        debugPrint(' ${result.data}');
       case Fail<ApplyResponseEntity>():
+        debugPrint(' error ${result.exception}');
         emit(ApplyDriverViewModelError(ErrorHandler.handle(result.exception!)));
-        break;
     }
   }
 }

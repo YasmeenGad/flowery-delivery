@@ -309,6 +309,7 @@ class _ApiManager implements ApiManager {
         MultipartFile.fromFileSync(
           photo.path,
           filename: photo.path.split(Platform.pathSeparator).last,
+          contentType: MediaType('image', _detectImageType(photo.path)), // ✅
         ),
       ),
     );
@@ -337,7 +338,20 @@ class _ApiManager implements ApiManager {
     }
     return _value;
   }
-
+  String _detectImageType(String path) {
+    final ext = path.split('.').last.toLowerCase();
+    switch (ext) {
+      case 'jpg':
+      case 'jpeg':
+        return 'jpeg';
+      case 'png':
+        return 'png';
+      case 'gif':
+        return 'gif';
+      default:
+        return 'jpeg'; // fallback
+    }
+  }
   @override
   Future<GetAllVehiclesDto> getAllVehicles() async {
     final _extra = <String, dynamic>{};
