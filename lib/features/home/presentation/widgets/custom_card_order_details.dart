@@ -70,9 +70,12 @@ class CustomCardOrderDetails extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AutoSizeText("EGP ${order.totalPrice.toString()}",
-                    style: MyFonts.styleSemiBold600_14
-                        .copyWith(color: MyColors.blackBase)),
+                FittedBox(
+                child:  AutoSizeText("EGP ${order.totalPrice.toString()}",
+                      style: MyFonts.styleSemiBold600_12
+                          .copyWith(color: MyColors.blackBase)),
+                ),
+
                 CustomStatusButton(
                   statusTxt: context.translate(LangKeys.reject),
                   onPressed: () async {
