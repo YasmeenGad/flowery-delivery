@@ -103,9 +103,11 @@ class OrderDetailsMapper {
         photo: orders.user!.photo,
       ),
       orderItems: orders.orderItems!.map((item) {
+        if (item == null) return OrderItems();
+        if(item.product == null) return OrderItems();
         return OrderItems(
           product: Product(
-            id: item!.product!.id,
+            id: item.product!.id,
             title: item.product!.title,
             slug: item.product!.slug,
             description: item.product!.description,
