@@ -2,14 +2,12 @@
 class Assets {
   Assets._();
 
-  static const String assetsTessdataAra = 'assets/tessdata/ara.traineddata';
   static const String assetsTessdataConfig = 'assets/tessdata_config.json';
   static const String filesCities = 'assets/files/cities.json';
   static const String filesCountry = 'assets/files/country.json';
   static const String filesStates = 'assets/files/states.json';
   static const String floweryDeliveryAssetsTessdataConfig = 'assets/tessdata_config.json';
   static const String fontsOronteusFinaeus = 'assets/fonts/oronteus_finaeus.ttf';
-  static const String generatedAssets = 'lib/generated/assets.dart';
   static const String imagesAboutAppImage = 'assets/images/about_app_image.gif';
   static const String imagesAdd = 'assets/images/add.png';
   static const String imagesArrowBackIos = 'assets/images/arrow_back_ios.png';

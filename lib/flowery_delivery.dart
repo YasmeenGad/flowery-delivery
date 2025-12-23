@@ -44,6 +44,7 @@ class FloweryDelivery extends StatelessWidget {
                   designSize: kIsWeb
                       ? Size(context.width, context.height)
                       : const Size(390, 844),
+
                   minTextAdapt: true,
                   child: BlocBuilder<AppCubit, AppStates>(
                     buildWhen: (previous, current) {
