@@ -14,7 +14,7 @@ class DropdownButtonVehicle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
-      value: vehiclesCubit.vehicleTypeController.text.isEmpty
+      initialValue: vehiclesCubit.vehicleTypeController.text.isEmpty
           ? null
           : vehiclesCubit.vehicleTypeController.text,
       decoration: InputDecoration(

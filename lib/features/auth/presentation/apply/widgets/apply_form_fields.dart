@@ -92,7 +92,7 @@ class _ApplyFormFieldsState extends State<ApplyFormFields> {
             labelText: 'Country',
             border: OutlineInputBorder(),
           ),
-          value: _applyFormViewModel.selectedCountry,
+          initialValue: _applyFormViewModel.selectedCountry,
           items: _applyFormViewModel.countries.map((country) {
             return DropdownMenuItem<String>(
               value: country['name'],
